@@ -1,87 +1,17 @@
 "use client";
 
-import type { VideoAsset } from "@/lib/site-data";
 import { WORK_VIDEOS } from "@/lib/site-data";
-import SmartVideo from "./smart-video";
+import FilmCard from "./film-card";
 import Reveal, { MaskLine } from "./reveal";
-import { useLightbox } from "./lightbox";
-import { cn } from "@/lib/utils";
-import { Play } from "lucide-react";
-
-/* ------------------------------------------------------------------ */
-/* Portfolio item                                                     */
-/* ------------------------------------------------------------------ */
-
-function PortfolioItem({
-  video,
-  aspectClass,
-  className,
-}: {
-  video: VideoAsset;
-  aspectClass: string;
-  className?: string;
-}) {
-  const { open } = useLightbox();
-
-  return (
-    <article className={cn("group", className)}>
-      <button
-        onClick={() => open(video)}
-        aria-label={`Play film — ${video.title}`}
-        className="block w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brass"
-      >
-        <div
-          className={cn(
-            "video-frame border border-white/[0.07]",
-            aspectClass
-          )}
-        >
-          <SmartVideo
-            src={video.src}
-            poster={video.poster}
-            ariaLabel={`${video.tag} — ${video.title}`}
-            videoClassName="group-hover:scale-[1.035] group-focus-visible:scale-[1.035]"
-          />
-
-          {/* hover veil */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/15"
-          />
-
-          {/* play badge */}
-          <div
-            aria-hidden="true"
-            className="absolute right-4 top-4 flex h-12 w-12 translate-y-2 items-center justify-center rounded-full border border-white/30 bg-ink/40 text-bone opacity-0 backdrop-blur-md transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 md:h-14 md:w-14"
-          >
-            <Play className="ml-0.5 h-4 w-4 fill-current" strokeWidth={1} />
-          </div>
-        </div>
-
-        {/* caption */}
-        <div className="mt-4 flex items-baseline justify-between gap-4 md:mt-5">
-          <div className="flex items-baseline gap-3 md:gap-4">
-            <span className="font-mono text-[10px] tracking-[0.3em] text-faint">
-              {video.index}
-            </span>
-            <h3 className="text-sm font-semibold tracking-wide text-bone transition-colors duration-300 group-hover:text-brass md:text-base">
-              {video.title}
-            </h3>
-          </div>
-          <span className="shrink-0 font-mono text-[9px] tracking-[0.28em] text-smoke md:text-[10px]">
-            {video.tag}
-          </span>
-        </div>
-      </button>
-    </article>
-  );
-}
+import { useSiteRouter } from "./router";
+import { ArrowRight } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /* Selected work — curated editorial grid                             */
 /* ------------------------------------------------------------------ */
 
 export default function Work() {
+  const { navigate } = useSiteRouter();
   const [cinematic, brandVisual, commercial, creator, profile, brandFilm, camI, camII] =
     WORK_VIDEOS;
 
@@ -117,19 +47,19 @@ export default function Work() {
         </div>
 
         {/* 01 — full-width opener */}
-        <PortfolioItem
+        <FilmCard
           video={cinematic}
           aspectClass="aspect-[4/3] md:aspect-[21/9]"
         />
 
         {/* 02 — asymmetric pair, right column drops */}
         <div className="mt-16 grid gap-12 md:mt-24 md:grid-cols-12 md:gap-8 lg:gap-12">
-          <PortfolioItem
+          <FilmCard
             video={brandVisual}
             aspectClass="aspect-[4/3]"
             className="md:col-span-7"
           />
-          <PortfolioItem
+          <FilmCard
             video={commercial}
             aspectClass="aspect-[4/3] md:aspect-[3/3.6]"
             className="md:col-span-5 md:mt-20 lg:mt-28"
@@ -138,12 +68,12 @@ export default function Work() {
 
         {/* 03 — asymmetric pair, mirrored */}
         <div className="mt-16 grid gap-12 md:mt-24 md:grid-cols-12 md:gap-8 lg:gap-12">
-          <PortfolioItem
+          <FilmCard
             video={creator}
             aspectClass="aspect-[4/3] md:aspect-[3/3.6]"
             className="md:col-span-5 md:order-1"
           />
-          <PortfolioItem
+          <FilmCard
             video={profile}
             aspectClass="aspect-[4/3]"
             className="md:col-span-7 md:order-2 md:mt-20"
@@ -152,7 +82,7 @@ export default function Work() {
 
         {/* 04 — full-width interlude */}
         <div className="mt-16 md:mt-24">
-          <PortfolioItem
+          <FilmCard
             video={brandFilm}
             aspectClass="aspect-[4/3] md:aspect-[21/9]"
           />
@@ -171,8 +101,8 @@ export default function Work() {
             </div>
           </Reveal>
           <div className="grid gap-12 md:grid-cols-2 md:gap-8 lg:gap-12">
-            <PortfolioItem video={camI} aspectClass="aspect-[4/3]" />
-            <PortfolioItem video={camII} aspectClass="aspect-[4/3]" />
+            <FilmCard video={camI} aspectClass="aspect-[4/3]" />
+            <FilmCard video={camII} aspectClass="aspect-[4/3]" />
           </div>
         </div>
 
@@ -182,6 +112,28 @@ export default function Work() {
             ALL FILMS ARE ORIGINAL AI-PRODUCED CONCEPTS AND CREATIVE STUDIES BY
             EMNEX AI.
           </p>
+        </Reveal>
+
+        {/* full archive link */}
+        <Reveal className="mt-10 md:mt-14">
+          <a
+            href="#/work"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/work");
+            }}
+            aria-label="Open the complete work archive — all 10 films"
+            className="group flex items-center justify-between gap-6 border border-white/[0.09] px-6 py-7 transition-colors duration-500 hover:border-bone/40 md:px-10 md:py-9"
+          >
+            <span className="font-mono text-[11px] tracking-[0.3em] text-ash transition-colors duration-300 group-hover:text-bone md:text-[13px]">
+              VIEW FULL ARCHIVE
+              <span className="ml-3 text-faint">— ALL 10 FILMS</span>
+            </span>
+            <ArrowRight
+              className="h-5 w-5 shrink-0 text-ash transition-all duration-300 group-hover:translate-x-2 group-hover:text-brass"
+              strokeWidth={1.5}
+            />
+          </a>
         </Reveal>
       </div>
     </section>

@@ -1,10 +1,13 @@
 "use client";
 
-import { ArrowUpRight, Mail } from "lucide-react";
-import { WHATSAPP_LINK, EMAIL_LINK } from "@/lib/site-data";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { WHATSAPP_LINK } from "@/lib/site-data";
 import Reveal, { MaskLine } from "./reveal";
+import { useSiteRouter } from "./router";
 
 export default function FinalCta() {
+  const { navigate } = useSiteRouter();
+
   return (
     <section
       aria-label="Start a project"
@@ -45,9 +48,11 @@ export default function FinalCta() {
 
           <Reveal delay={0.5} className="mt-12 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
             <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/contact");
+              }}
               className="group inline-flex w-full items-center justify-center gap-3 bg-bone px-10 py-5 font-mono text-[12px] tracking-[0.25em] text-ink transition-all duration-300 hover:bg-brass sm:w-auto"
             >
               START A PROJECT
@@ -57,17 +62,19 @@ export default function FinalCta() {
               />
             </a>
             <a
-              href={EMAIL_LINK}
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center gap-3 border border-white/25 px-10 py-5 font-mono text-[12px] tracking-[0.25em] text-bone transition-all duration-300 hover:border-bone hover:bg-bone/10 sm:w-auto"
             >
-              <Mail className="h-4 w-4" strokeWidth={1.5} />
-              EMAIL ME
+              <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+              CHAT ON WHATSAPP
             </a>
           </Reveal>
 
           <Reveal delay={0.6} className="mt-10">
             <p className="font-mono text-[10px] tracking-[0.3em] text-faint">
-              PROJECTS DISCUSSED PERSONALLY — CUSTOM REQUIREMENTS WELCOME
+              SEND A BRIEF THROUGH THE FORM — IT OPENS DIRECTLY IN WHATSAPP
             </p>
           </Reveal>
         </div>

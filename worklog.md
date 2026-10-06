@@ -21,3 +21,24 @@ Stage Summary:
 - Deliverable: runnable single-page Next.js 16 portfolio site at src/app/page.tsx (only `/` route), all content truthful (no invented clients/testimonials/stats/pricing).
 - Key decisions: brass (#c8a878) as single warm accent; Archivo + Bodoni Moda italic + IBM Plex Mono type system; videos carry the color; Cloudinary frame-extraction for posters; editorial asymmetric portfolio instead of card grid.
 - Reveal/MaskLine pitfall documented above for future reference.
+
+---
+Task ID: 2
+Agent: Super Z (main agent)
+Task: Upgrade EMNEX AI from single-page landing to a true multi-page website with a dedicated project inquiry FORM page; every conversion path must land on the owner's WhatsApp (wa.me/2348162983333).
+
+Work Log:
+- Built hash-based multi-page router `src/components/site/router.tsx`: routes "/" (home) / "/work" (archive) / "/contact" (form page), hashchange + back/forward support, deep links, per-page document.title, scroll management (top on page change, section scroll via pendingSection + double-rAF).
+- Rewrote `src/app/page.tsx`: SiteRouterProvider > LightboxProvider > SiteShell; shared Nav/Footer across pages; motion.main keyed by route for cinematic fade-up page transitions.
+- Updated `src/lib/site-data.ts`: route-based NAV_LINKS (WORK page link + SERVICES/PROCESS/ABOUT home sections), WHATSAPP_NUMBER_INTL, PROJECT_TYPES, BUDGET_OPTIONS, buildWhatsAppBriefUrl() composing a structured WhatsApp message (greeting/NAME/BRAND/EMAIL/PROJECT TYPE/BUDGET/BRIEF).
+- Updated Nav (active page states with brass dot + brass START A PROJECT when on /contact, mobile menu gains brass START A PROJECT entry + WhatsApp note), Hero (VIEW MY WORK -> /work, START A PROJECT -> /contact), FinalCta (primary -> form page, secondary CHAT ON WHATSAPP -> direct wa.me), Footer (HOME/WORK/SERVICES/PROCESS/ABOUT/START A PROJECT + "form opens directly in WhatsApp" note).
+- Extracted shared `film-card.tsx` (FilmCard) reused by Home selected work and archive; Home grid gained "VIEW FULL ARCHIVE — ALL 10 FILMS" link.
+- NEW `work-page.tsx`: THE ARCHIVE — breadcrumb, "COMPLETE index" headline, (10 FILMS) counter, all 10 films in editorial rhythm (21/9 openers, 7/5 pairs, diptych), honesty line, "YOUR BRAND COULD BE next." CTA -> /contact.
+- NEW `contact-page.tsx`: editorial dark form page — NAME*, BRAND, EMAIL, PROJECT TYPE select, BUDGET select, BRIEF* textarea, terracotta validation, SEND VIA WHATSAPP -> window.open(buildWhatsAppBriefUrl(...)); brass confirmation panel with "Tap here to try again" fallback anchor; side panel: DIRECT LINE (+234 816 298 3333 + OPEN WHATSAPP), WHAT HAPPENS NEXT (3 steps), AVAILABILITY.
+- globals.css: added color-scheme: dark for native selects. Mobile fixes: budget placeholder shortened to fit, (10 FILMS) whitespace-nowrap.
+- Fixed react-hooks/set-state-in-effect lint error in router (rAF-deferred initial deep-link state).
+- Browser-verified (agent-browser): desktop 1440x900 + mobile 390x844. Confirmed: all 3 pages render + per-page titles; WORK nav active state; lightbox plays with sound; cross-page section scroll (footer SERVICES -> home #services at ~7k px); form validation error states; FULL SUBMISSION FLOW -> window.open opens api.whatsapp.com/send/?phone=2348162983333 with the complete pre-filled brief (verified in new tab URL + fallback link href); confirmation panel; back/forward + deep link #/contact; no horizontal overflow on mobile; mobile menu navigation; footer pushed naturally. Screenshots in /home/z/my-project/verification/multi-*.png. Lint clean, dev.log all 200s.
+
+Stage Summary:
+- Site is now a 3-page website (Home / Work archive / Contact form) served on the single "/" route via hash routing; all 10 videos used across pages; every conversion path (nav CTA, hero CTA, final CTA, work page CTA, footer, form submit, direct line) lands on WhatsApp +234 816 298 3333.
+- Key decisions: hash router instead of real routes (sandbox exposes only "/"); form builds a structured brief into the wa.me text param instead of a backend (zero storage, instant WhatsApp landing, honest UX).

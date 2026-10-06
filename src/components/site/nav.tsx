@@ -3,14 +3,21 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { NAV_LINKS, WHATSAPP_LINK } from "@/lib/site-data";
+import { NAV_LINKS } from "@/lib/site-data";
+import { useSiteRouter } from "./router";
 import { cn } from "@/lib/utils";
 
 export function Wordmark({ className }: { className?: string }) {
+  const { navigate } = useSiteRouter();
+
   return (
     <a
-      href="#top"
-      aria-label="EMNEX AI — back to top"
+      href="#/"
+      onClick={(e) => {
+        e.preventDefault();
+        navigate("/");
+      }}
+      aria-label="EMNEX AI — home"
       className={cn(
         "group inline-flex items-baseline gap-2 leading-none select-none",
         className
@@ -27,6 +34,7 @@ export function Wordmark({ className }: { className?: string }) {
 }
 
 export default function Nav() {
+  const { route, navigate } = useSiteRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -43,6 +51,11 @@ export default function Nav() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  const goTo = (to: Parameters<typeof navigate>[0], sectionId?: string) => {
+    setMenuOpen(false);
+    navigate(to, sectionId);
+  };
 
   return (
     <>
@@ -61,24 +74,46 @@ export default function Nav() {
           <Wordmark />
 
           <ul className="hidden items-center gap-9 lg:flex">
-            {NAV_LINKS.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  className="link-line font-mono text-[11px] tracking-[0.28em] text-ash transition-colors duration-300 hover:text-bone"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active = link.route !== "/" && route === link.route;
+              return (
+                <li key={link.label}>
+                  <a
+                    href={`#${link.route}`}
+                    aria-current={active ? "page" : undefined}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goTo(link.route, link.sectionId);
+                    }}
+                    className={cn(
+                      "link-line font-mono text-[11px] tracking-[0.28em] transition-colors duration-300",
+                      active ? "text-bone" : "text-ash hover:text-bone"
+                    )}
+                  >
+                    {active ? (
+                      <span className="mr-2 inline-block h-1 w-1 -translate-y-0.5 rounded-full bg-brass align-middle" />
+                    ) : null}
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center gap-4">
             <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden items-center border border-white/20 px-5 py-2.5 font-mono text-[11px] tracking-[0.22em] text-bone transition-all duration-300 hover:border-bone hover:bg-bone hover:text-ink sm:inline-flex"
+              href="#/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                goTo("/contact");
+              }}
+              aria-current={route === "/contact" ? "page" : undefined}
+              className={cn(
+                "hidden items-center border px-5 py-2.5 font-mono text-[11px] tracking-[0.22em] transition-all duration-300 sm:inline-flex",
+                route === "/contact"
+                  ? "border-brass bg-brass text-ink"
+                  : "border-white/20 text-bone hover:border-bone hover:bg-bone hover:text-ink"
+              )}
             >
               START A PROJECT
             </a>
@@ -123,8 +158,11 @@ export default function Nav() {
               {NAV_LINKS.map((link, i) => (
                 <motion.a
                   key={link.label}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
+                  href={`#${link.route}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goTo(link.route, link.sectionId);
+                  }}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.07, duration: 0.5 }}
@@ -138,22 +176,37 @@ export default function Nav() {
                   </span>
                 </motion.a>
               ))}
+
+              <motion.a
+                href="#/contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goTo("/contact");
+                }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.42, duration: 0.5 }}
+                className="group flex items-baseline gap-4 border-b border-white/[0.06] py-5"
+              >
+                <span className="font-mono text-[10px] tracking-[0.3em] text-faint">
+                  05
+                </span>
+                <span className="font-wide text-4xl font-bold tracking-tight text-brass">
+                  START A PROJECT
+                </span>
+              </motion.a>
             </nav>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
               className="px-8 pb-12"
             >
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center bg-bone py-4 font-mono text-[12px] tracking-[0.25em] text-ink transition-colors hover:bg-brass"
-              >
-                START A PROJECT
-              </a>
+              <p className="mb-5 font-mono text-[10px] leading-relaxed tracking-[0.2em] text-faint">
+                EVERY PROJECT STARTS WITH A CONVERSATION — THE FORM OPENS
+                DIRECTLY IN WHATSAPP.
+              </p>
             </motion.div>
           </motion.div>
         ) : null}

@@ -2,16 +2,34 @@
 
 import { ArrowUpRight } from "lucide-react";
 import {
-  NAV_LINKS,
   SOCIALS,
   EMAIL,
   EMAIL_LINK,
   WHATSAPP_LINK,
   WHATSAPP_NUMBER_DISPLAY,
 } from "@/lib/site-data";
+import { useSiteRouter, type SiteRoute } from "./router";
+import { cn } from "@/lib/utils";
+
+function footerLinkClass(active: boolean): string {
+  return cn(
+    "link-line text-sm font-medium tracking-wide transition-colors",
+    active ? "text-bone" : "text-ash hover:text-bone"
+  );
+}
 
 export default function Footer() {
+  const { navigate, route } = useSiteRouter();
   const year = new Date().getFullYear();
+
+  const menuLinks: { label: string; route: SiteRoute; sectionId?: string }[] = [
+    { label: "HOME", route: "/" },
+    { label: "WORK", route: "/work" },
+    { label: "SERVICES", route: "/", sectionId: "services" },
+    { label: "PROCESS", route: "/", sectionId: "process" },
+    { label: "ABOUT", route: "/", sectionId: "about" },
+    { label: "START A PROJECT", route: "/contact" },
+  ];
 
   return (
     <footer
@@ -41,16 +59,23 @@ export default function Footer() {
               MENU
             </h3>
             <ul className="space-y-4">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="link-line text-sm font-medium tracking-wide text-ash transition-colors hover:text-bone"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
+              {menuLinks.map((link) => {
+                const active = route === link.route && !link.sectionId;
+                return (
+                  <li key={link.label}>
+                    <a
+                      href={`#${link.route}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(link.route, link.sectionId);
+                      }}
+                      className={footerLinkClass(active)}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -109,13 +134,18 @@ export default function Footer() {
               NEW PROJECT
             </h3>
             <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/contact");
+              }}
               className="inline-flex items-center border border-white/20 px-6 py-3.5 font-mono text-[10px] tracking-[0.25em] text-bone transition-all duration-300 hover:border-bone hover:bg-bone hover:text-ink"
             >
               START A PROJECT
             </a>
+            <p className="mt-5 max-w-[220px] font-mono text-[10px] leading-relaxed tracking-[0.18em] text-faint">
+              THE FORM OPENS DIRECTLY IN WHATSAPP — NO ACCOUNTS, NO WAITING.
+            </p>
           </div>
         </div>
 

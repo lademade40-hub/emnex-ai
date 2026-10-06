@@ -2,12 +2,14 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import SmartVideo from "./smart-video";
 import { MaskLine } from "./reveal";
-import { HERO_VIDEO, WHATSAPP_LINK } from "@/lib/site-data";
+import { useSiteRouter } from "./router";
+import { HERO_VIDEO } from "@/lib/site-data";
 
 export default function Hero() {
+  const { navigate } = useSiteRouter();
   const sectionRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
 
@@ -89,19 +91,25 @@ export default function Hero() {
               className="flex flex-col gap-3 sm:flex-row sm:items-center"
             >
               <a
-                href="#work"
+                href="#/work"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/work");
+                }}
                 className="group inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 font-mono text-[11px] tracking-[0.25em] text-ink transition-all duration-300 hover:bg-brass"
               >
                 VIEW MY WORK
-                <ArrowDown
-                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-y-0.5"
+                <ArrowRight
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                   strokeWidth={2}
                 />
               </a>
               <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#/contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/contact");
+                }}
                 className="inline-flex items-center justify-center border border-white/25 px-8 py-4 font-mono text-[11px] tracking-[0.25em] text-bone backdrop-blur-sm transition-all duration-300 hover:border-bone hover:bg-bone/10"
               >
                 START A PROJECT

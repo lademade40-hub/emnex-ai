@@ -1,3 +1,5 @@
+import type { SiteRoute } from "@/components/site/router";
+
 export type VideoAsset = {
   id: string;
   index: string;
@@ -110,10 +112,61 @@ export const ALL_VIDEOS: VideoAsset[] = [HERO_VIDEO, FEATURED_VIDEO, ...WORK_VID
 /* ------------------------------------------------------------------ */
 
 export const WHATSAPP_NUMBER_DISPLAY = "0816 298 3333";
+export const WHATSAPP_NUMBER_INTL = "+234 816 298 3333";
 
 export const WHATSAPP_LINK =
   "https://wa.me/2348162983333?text=" +
   encodeURIComponent("Hi EMNEX AI, I'd like to discuss a project.");
+
+/* ------------------------------------------------------------------ */
+/* Project inquiry form → WhatsApp brief                              */
+/* ------------------------------------------------------------------ */
+
+export const PROJECT_TYPES = [
+  "AI Product Commercial",
+  "Cinematic Brand Film",
+  "Social Media Ads",
+  "Product Visualization",
+  "Creative AI Content",
+  "Something else",
+];
+
+export const BUDGET_OPTIONS = [
+  "To be discussed",
+  "Under $200",
+  "$200 – $500",
+  "$500 – $1,000",
+  "Above $1,000",
+];
+
+export type BriefFields = {
+  name: string;
+  brand: string;
+  email: string;
+  type: string;
+  budget: string;
+  message: string;
+};
+
+/** Turns the inquiry form into a structured WhatsApp message. */
+export function buildWhatsAppBriefUrl(f: BriefFields): string {
+  const lines = [
+    "Hello EMNEX AI — I'd like to start a project.",
+    "",
+    `NAME: ${f.name.trim()}`,
+    f.brand.trim() ? `BRAND: ${f.brand.trim()}` : null,
+    f.email.trim() ? `EMAIL: ${f.email.trim()}` : null,
+    f.type ? `PROJECT TYPE: ${f.type}` : null,
+    f.budget ? `BUDGET: ${f.budget}` : null,
+    "",
+    "BRIEF:",
+    f.message.trim(),
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+
+  return `https://wa.me/2348162983333?text=${encodeURIComponent(lines)}`;
+}
 
 export const EMAIL = "emnexai@gmail.com";
 export const EMAIL_LINK = `mailto:${EMAIL}`;
@@ -216,9 +269,16 @@ export const PROCESS_STEPS = [
   },
 ];
 
-export const NAV_LINKS = [
-  { label: "WORK", href: "#work" },
-  { label: "SERVICES", href: "#services" },
-  { label: "PROCESS", href: "#process" },
-  { label: "ABOUT", href: "#about" },
+export type NavLink = {
+  label: string;
+  route: SiteRoute;
+  /** Home-page section the link scrolls to (when route is "/"). */
+  sectionId?: string;
+};
+
+export const NAV_LINKS: NavLink[] = [
+  { label: "WORK", route: "/work" },
+  { label: "SERVICES", route: "/", sectionId: "services" },
+  { label: "PROCESS", route: "/", sectionId: "process" },
+  { label: "ABOUT", route: "/", sectionId: "about" },
 ];
