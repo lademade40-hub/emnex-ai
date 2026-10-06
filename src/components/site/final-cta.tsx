@@ -48,7 +48,7 @@ export default function FinalCta() {
 
           <Reveal delay={0.5} className="mt-12 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
             <a
-              href="#/contact"
+              href="/contact"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/contact");

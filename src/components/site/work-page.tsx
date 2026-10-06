@@ -32,7 +32,7 @@ export default function WorkPage() {
         <Reveal y={14}>
           <p className="mb-6 flex items-center gap-4 font-mono text-[10px] tracking-[0.35em] text-brass md:text-[11px]">
             <a
-              href="#/"
+              href="/"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/");
@@ -176,7 +176,7 @@ export default function WorkPage() {
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
-                href="#/contact"
+                href="/contact"
                 onClick={(e) => {
                   e.preventDefault();
                   navigate("/contact");
@@ -190,7 +190,7 @@ export default function WorkPage() {
                 />
               </a>
               <a
-                href="#/"
+                href="/"
                 onClick={(e) => {
                   e.preventDefault();
                   navigate("/");

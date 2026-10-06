@@ -75,7 +75,7 @@ export default function ContactPage() {
         <Reveal y={14}>
           <p className="mb-6 flex items-center gap-4 font-mono text-[10px] tracking-[0.35em] text-brass md:text-[11px]">
             <a
-              href="#/"
+              href="/"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/");

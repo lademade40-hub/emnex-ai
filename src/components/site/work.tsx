@@ -117,7 +117,7 @@ export default function Work() {
         {/* full archive link */}
         <Reveal className="mt-10 md:mt-14">
           <a
-            href="#/work"
+            href="/work"
             onClick={(e) => {
               e.preventDefault();
               navigate("/work");

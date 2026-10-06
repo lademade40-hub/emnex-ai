@@ -91,7 +91,7 @@ export default function Hero() {
               className="flex flex-col gap-3 sm:flex-row sm:items-center"
             >
               <a
-                href="#/work"
+                href="/work"
                 onClick={(e) => {
                   e.preventDefault();
                   navigate("/work");
@@ -105,7 +105,7 @@ export default function Hero() {
                 />
               </a>
               <a
-                href="#/contact"
+                href="/contact"
                 onClick={(e) => {
                   e.preventDefault();
                   navigate("/contact");

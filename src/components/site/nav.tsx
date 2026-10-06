@@ -12,7 +12,7 @@ export function Wordmark({ className }: { className?: string }) {
 
   return (
     <a
-      href="#/"
+      href="/"
       onClick={(e) => {
         e.preventDefault();
         navigate("/");
@@ -79,7 +79,7 @@ export default function Nav() {
               return (
                 <li key={link.label}>
                   <a
-                    href={`#${link.route}`}
+                    href={link.route}
                     aria-current={active ? "page" : undefined}
                     onClick={(e) => {
                       e.preventDefault();
@@ -102,7 +102,7 @@ export default function Nav() {
 
           <div className="flex items-center gap-4">
             <a
-              href="#/contact"
+              href="/contact"
               onClick={(e) => {
                 e.preventDefault();
                 goTo("/contact");
@@ -158,7 +158,7 @@ export default function Nav() {
               {NAV_LINKS.map((link, i) => (
                 <motion.a
                   key={link.label}
-                  href={`#${link.route}`}
+                  href={link.route}
                   onClick={(e) => {
                     e.preventDefault();
                     goTo(link.route, link.sectionId);
@@ -178,7 +178,7 @@ export default function Nav() {
               ))}
 
               <motion.a
-                href="#/contact"
+                href="/contact"
                 onClick={(e) => {
                   e.preventDefault();
                   goTo("/contact");

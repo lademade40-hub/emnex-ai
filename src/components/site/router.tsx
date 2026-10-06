@@ -1,57 +1,34 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
-/** The site behaves as a multi-page website: distinct pages, per-page titles,
- *  deep-linkable hash URLs (#/work, #/contact) and back/forward support. */
+/** The site is a true multi-page Next.js website with real routes:
+ *  "/" (home), "/work" (archive) and "/contact" (project form).
+ *  This module keeps the site's own navigation helpers on top of the
+ *  App Router so every CTA supports same-page section scrolling. */
 export type SiteRoute = "/" | "/work" | "/contact";
 
-const TITLES: Record<SiteRoute, string> = {
-  "/": "EMNEX AI — AI-Powered Product Films & Cinematic Brand Videos",
-  "/work": "Work Archive — EMNEX AI",
-  "/contact": "Start a Project — EMNEX AI",
-};
-
-function parseHash(): SiteRoute {
-  const raw = window.location.hash.replace(/^#/, "");
-  if (raw === "/work" || raw === "/contact") return raw;
-  return "/";
-}
+const SECTION_KEY = "emnex:pendingSection";
 
 type SiteRouterValue = {
   route: SiteRoute;
   navigate: (to: SiteRoute, sectionId?: string) => void;
 };
 
-const SiteRouterContext = createContext<SiteRouterValue | null>(null);
-
-export function useSiteRouter(): SiteRouterValue {
-  const ctx = useContext(SiteRouterContext);
-  if (!ctx) throw new Error("useSiteRouter must be used within SiteRouterProvider");
-  return ctx;
+function scrollToSection(id: string) {
+  // two frames — guarantees the target view is mounted before scrolling
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+  });
 }
 
-export function SiteRouterProvider({ children }: { children: ReactNode }) {
-  const [route, setRoute] = useState<SiteRoute>("/");
-  const pendingSection = useRef<string | null>(null);
-
-  const scrollToSection = useCallback((id: string) => {
-    // two frames — guarantees the target view is mounted before scrolling
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "auto", block: "start" });
-      });
-    });
-  }, []);
+/** Shared navigation helper — wraps next/navigation with section support. */
+export function useSiteRouter(): SiteRouterValue {
+  const route = (usePathname() ?? "/") as SiteRoute;
+  const router = useRouter();
 
   const navigate = useCallback(
     (to: SiteRoute, sectionId?: string) => {
@@ -60,38 +37,47 @@ export function SiteRouterProvider({ children }: { children: ReactNode }) {
         else window.scrollTo({ top: 0, behavior: "auto" });
         return;
       }
-      pendingSection.current = sectionId ?? null;
-      window.location.hash = to; // fires hashchange → route effect below
+      if (sectionId) {
+        // hand the pending section to <SectionScrollManager/> which runs
+        // after the new route has mounted
+        try {
+          window.sessionStorage.setItem(SECTION_KEY, sectionId);
+        } catch {
+          /* storage unavailable — navigation still works */
+        }
+        router.push(to, { scroll: false });
+        return;
+      }
+      router.push(to); // App Router scrolls to top by default
     },
-    [route, scrollToSection]
+    [route, router]
   );
 
-  // deep-link support on first load (e.g. /#/contact)
-  useEffect(() => {
-    const initial = parseHash();
-    if (initial === "/") return;
-    const raf = window.requestAnimationFrame(() => setRoute(initial));
-    return () => window.cancelAnimationFrame(raf);
-  }, []);
+  return { route, navigate };
+}
+
+/** Drop into the root layout — after every route change, scrolls to the
+ *  section requested by a cross-page navigate() call (e.g. footer
+ *  "SERVICES" from /work → /#services). */
+export function SectionScrollManager() {
+  const pathname = usePathname();
+  const firstRun = useRef(true);
 
   useEffect(() => {
-    const onHashChange = () => setRoute(parseHash());
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
+    // skip the very first mount — no navigation has happened yet
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    let id: string | null = null;
+    try {
+      id = window.sessionStorage.getItem(SECTION_KEY);
+      window.sessionStorage.removeItem(SECTION_KEY);
+    } catch {
+      /* noop */
+    }
+    if (id) scrollToSection(id);
+  }, [pathname]);
 
-  // per-page title + scroll management on every route change
-  useEffect(() => {
-    document.title = TITLES[route];
-    const target = pendingSection.current;
-    pendingSection.current = null;
-    if (target) scrollToSection(target);
-    else window.scrollTo({ top: 0, behavior: "auto" });
-  }, [route, scrollToSection]);
-
-  const value = useMemo(() => ({ route, navigate }), [route, navigate]);
-
-  return (
-    <SiteRouterContext.Provider value={value}>{children}</SiteRouterContext.Provider>
-  );
+  return null;
 }

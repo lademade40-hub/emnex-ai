@@ -52,3 +52,17 @@ prompt
 server.log
 # Skills directory
 /skills/
+# sandbox scaffolding (not part of the website)
+/db
+/prisma
+/verification
+/download
+/upload
+/examples
+/mini-services
+/tests
+/.zscripts
+/Caddyfile
+/worklog.md
+/components.json
+/tailwind.config.ts

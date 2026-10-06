@@ -64,7 +64,7 @@ export default function Footer() {
                 return (
                   <li key={link.label}>
                     <a
-                      href={`#${link.route}`}
+                      href={link.route}
                       onClick={(e) => {
                         e.preventDefault();
                         navigate(link.route, link.sectionId);
@@ -134,7 +134,7 @@ export default function Footer() {
               NEW PROJECT
             </h3>
             <a
-              href="#/contact"
+              href="/contact"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/contact");

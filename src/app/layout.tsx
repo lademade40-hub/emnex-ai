@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Bodoni_Moda, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { LightboxProvider } from "@/components/site/lightbox";
+import SiteShell from "@/components/site/site-shell";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -72,7 +74,9 @@ export default function RootLayout({
       <body
         className={`${archivo.variable} ${bodoni.variable} ${plexMono.variable} antialiased bg-background text-foreground font-sans`}
       >
-        {children}
+        <LightboxProvider>
+          <SiteShell>{children}</SiteShell>
+        </LightboxProvider>
       </body>
     </html>
   );
