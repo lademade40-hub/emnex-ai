@@ -3,6 +3,7 @@ import { Archivo, Bodoni_Moda, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { LightboxProvider } from "@/components/site/lightbox";
 import SiteShell from "@/components/site/site-shell";
+import { SITE_URL } from "@/lib/site-data";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -29,7 +30,9 @@ const OG_IMAGE =
   "https://res.cloudinary.com/jtjd6zpo/image/upload/v1790602534/5848204809893253084.jpg";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
+  alternates: { canonical: "/" },
   description: SITE_DESCRIPTION,
   keywords: [
     "EMNEX AI",
@@ -56,6 +59,11 @@ export const metadata: Metadata = {
     images: [OG_IMAGE],
   },
   robots: { index: true, follow: true },
+  // Google Search Console ownership verification — set GOOGLE_SITE_VERIFICATION
+  // in Vercel env vars to the value Google gives you (e.g. "google1234abcd.html" content).
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export const viewport: Viewport = {

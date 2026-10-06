@@ -1,5 +1,11 @@
 import type { SiteRoute } from "@/components/site/router";
 
+/** Canonical production URL — override with NEXT_PUBLIC_SITE_URL env var
+ *  (used for sitemap, robots and Open Graph absolute URLs). */
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  "https://emnex-ai.vercel.app";
+
 export type VideoAsset = {
   id: string;
   index: string;
